@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "./firebase";
-import { useAuthContext } from "./AuthContext"; // Assumes you have auth context
+import { useAuthContext } from "./AuthContext";
 
 export default function Marketplace() {
   const [products, setProducts] = useState([]);
