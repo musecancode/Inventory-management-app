@@ -1,20 +1,18 @@
-// src/AddProduct.jsx
 import { useState } from "react";
-import { db, auth } from "./firebase";
+import { db } from "./firebase";
 import { doc, collection, addDoc, serverTimestamp } from "firebase/firestore";
 
-export default function AddProduct() {
+export default function AddProduct({ vendorId, refreshProducts }) {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
 
   const handleAddProduct = async () => {
     try {
-      const vendorId = auth.currentUser?.uid;
       if (!vendorId) throw new Error("User not logged in");
 
-      const userDocRef = doc(db, "users", vendorId); // reference to user doc
-      const productsSubColRef = collection(userDocRef, "products"); // reference to subcollection
+      const userDocRef = doc(db, "users", vendorId);
+      const productsSubColRef = collection(userDocRef, "products");
 
       await addDoc(productsSubColRef, {
         title,
@@ -27,6 +25,8 @@ export default function AddProduct() {
       setTitle("");
       setPrice("");
       setStock("");
+
+      refreshProducts(); // Trigger re-fetch
     } catch (error) {
       console.error("Add product error:", error);
       alert("Failed to add product");

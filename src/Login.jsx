@@ -1,54 +1,71 @@
-// src/VendorProducts.jsx
-import { useEffect, useState } from "react";
-import { db, auth } from "./firebase";
-import { collection, getDocs } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+// src/Login.jsx
+import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "./firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
-export default function VendorProducts() {
-  const [products, setProducts] = useState([]);
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  // Function to fetch products from subcollection
-  const fetchVendorProducts = async (vendorId) => {
+  const handleLogin = async () => {
     try {
-      const productsRef = collection(db, "users", vendorId, "products");
-      const snapshot = await getDocs(productsRef);
-      const items = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setProducts(items);
-    } catch (err) {
-      console.error("Error fetching vendor products:", err);
+      const userCred = await signInWithEmailAndPassword(auth, email, password);
+      const uid = userCred.user.uid;
+
+      const userDoc = await getDoc(doc(db, "users", uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const role = userData.role;
+
+        if (role === "vendor") {
+          navigate("/vendor");
+        } else if (role === "consumer") {
+          navigate("/consumer");
+        } else {
+          alert("Invalid role!");
+        }
+      } else {
+        alert("No user data found!");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Invalid credentials!");
     }
   };
 
-  // Wait for auth to be ready before calling fetch
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        fetchVendorProducts(user.uid);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Your Products</h2>
-      {products.length === 0 ? (
-        <p className="text-gray-500">No products added yet.</p>
-      ) : (
-        products.map((p) => (
-          <div key={p.id} className="border-b py-2">
-            <div>
-              <strong>{p.title}</strong>
-            </div>
-            <div>
-              ₹{p.price} — Stock: {p.stock}
-            </div>
-          </div>
-        ))
-      )}
+    <div className="max-w-sm mx-auto p-6 mt-10 border rounded shadow-lg">
+      <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+      <input
+        type="email"
+        placeholder="Email"
+        className="w-full border p-2 mb-3 rounded"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        className="w-full border p-2 mb-4 rounded"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button
+        onClick={handleLogin}
+        className="bg-purple-700 text-white w-full py-2 rounded hover:bg-purple-400"
+      >
+        Log In
+      </button>
+
+      <p className="text-center text-sm mt-4">
+        Don't have an account?{" "}
+        <a href="/signup" className="text-purple-600 hover:underline">
+          Sign Up
+        </a>
+      </p>
     </div>
   );
 }

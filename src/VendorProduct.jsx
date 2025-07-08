@@ -1,32 +1,4 @@
-import { useEffect, useState } from "react";
-import { db, auth } from "./firebase";
-import { collection, getDocs } from "firebase/firestore";
-
-export default function VendorProducts() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    const fetchVendorProducts = async () => {
-      const vendorId = auth.currentUser?.uid;
-      if (!vendorId) return;
-
-      try {
-        // Correct path to vendor's subcollection
-        const productsRef = collection(db, "users", vendorId, "products");
-        const snapshot = await getDocs(productsRef);
-        const items = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setProducts(items);
-      } catch (err) {
-        console.error("Error fetching vendor products:", err);
-      }
-    };
-
-    fetchVendorProducts();
-  }, []);
-
+export default function VendorProducts({ products }) {
   return (
     <div className="p-6">
       <h2 className="text-xl font-bold mb-4">Your Products</h2>
