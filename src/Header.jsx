@@ -6,7 +6,7 @@ import { auth } from "./firebase";
 import { UserPlus, User } from "lucide-react";
 
 export default function Header() {
-  const [user] = useAuthContext();
+  const { user } = useAuthContext();
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
