@@ -1,14 +1,23 @@
 // src/Marketplace.jsx
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "./firebase";
 import { useAuthContext } from "./AuthContext";
 
 export default function Marketplace() {
   const [products, setProducts] = useState([]);
-  const { user } = useAuthContext();
+  const { user, role } = useAuthContext();
 
   useEffect(() => {
+    if (!user) return;
+
     const fetchAllVendorProducts = async () => {
       const usersSnapshot = await getDocs(collection(db, "users"));
       const allProducts = [];
@@ -36,34 +45,40 @@ export default function Marketplace() {
     };
 
     fetchAllVendorProducts();
-  }, []);
+  }, [user]);
 
-  const handleBuy = async (product) => {
-    const quantity = parseInt(prompt("Enter quantity: "), 10);
-
-    if (!quantity || quantity <= 0) return alert("Invalid quantity");
-
-    const orderData = {
-      productId: product.id,
-      vendorId: product.vendorId,
-      title: product.title,
-      price: product.price,
-      quantity,
-      status: "Pending",
-      orderDate: new Date().toISOString(),
-    };
+  const handleAddToCart = async (product) => {
+    if (!user || role !== "consumer") {
+      alert("Only consumers can add to cart.");
+      return;
+    }
 
     try {
-      await db
-        .collection("users")
-        .doc(user.uid)
-        .collection("orders")
-        .add(orderData);
+      const cartRef = doc(db, "users", user.uid, "cart", product.id);
+      const cartSnap = await getDoc(cartRef);
 
-      alert("Order placed successfully!");
-    } catch (err) {
-      console.error("Error placing order:", err);
-      alert("Failed to place order");
+      if (cartSnap.exists()) {
+        const existingQty = cartSnap.data().quantity;
+        await updateDoc(cartRef, {
+          quantity: existingQty + 1,
+        });
+        console.log("Cart item updated");
+      } else {
+        await setDoc(cartRef, {
+          title: product.title,
+          price: product.price,
+          vendorId: product.vendorId,
+          stock: product.stock,
+          image: product.image || "",
+          quantity: 1,
+        });
+        console.log("Cart item created");
+      }
+
+      alert("Added to cart!");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add to cart");
     }
   };
 
@@ -72,15 +87,26 @@ export default function Marketplace() {
       <h2 className="text-2xl font-bold mb-6 text-center">Marketplace</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {products.map((product) => (
-          <div key={product.id} className="border rounded p-4 shadow">
-            <h3 className="text-lg font-semibold">{product.title}</h3>
-            <p>Price: ₹{product.price}</p>
-            <p>Stock: {product.stock}</p>
+          <div
+            key={`${product.vendorId}-${product.id}`}
+            className="border p-4 rounded shadow"
+          >
+            <img
+              src={product.image}
+              alt={product.title}
+              className="h-40 object-cover w-full rounded"
+            />
+            <h3 className="text-lg font-semibold mt-2">{product.title}</h3>
+            <p className="text-gray-600">Price: ₹{product.price}</p>
+            <p className="text-gray-500">Stock: {product.stock}</p>
+
+            {/* Removed Buy Now button */}
+
             <button
-              className="mt-2 bg-green-600 text-white py-1 px-3 rounded hover:bg-green-700"
-              onClick={() => handleBuy(product)}
+              onClick={() => handleAddToCart(product)}
+              className="mt-2 bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 w-full"
             >
-              Buy
+              Add to Cart
             </button>
           </div>
         ))}

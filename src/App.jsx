@@ -4,8 +4,9 @@ import SignUp from "./Signup";
 import Login from "./Login";
 import VendorDashboard from "./VendorDashboard";
 import ConsumerDashboard from "./ConsumerDashboard";
-import Home from "./Home"; // 🆕 import HomePage
-import Header from "./Header"; // 🆕 ensure Header is also imported
+import Home from "./Home"; //
+import Header from "./Header";
+import CartPage from "./CartPage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/vendor" element={<VendorDashboard />} />
         <Route path="/consumer" element={<ConsumerDashboard />} />
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
     </BrowserRouter>
   );
