@@ -55,17 +55,13 @@ const CartPage = () => {
         return;
       }
 
-      console.log("Cart Data:", cartData);
-
-      // 1. Create order
       await addDoc(orderRef, {
         items: cartData,
         placedAt: new Date(),
         status: "Processing",
-        arrivalDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days later
+        arrivalDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
       });
 
-      // 2. Update stock + clear cart
       for (const item of cartData) {
         const productRef = doc(
           db,
@@ -84,6 +80,7 @@ const CartPage = () => {
             `Failed to update stock for product ${item.productId}:`,
             err
           );
+          alert(`Could not update stock for ${item.title}. Try again later.`);
         }
 
         try {
@@ -103,10 +100,33 @@ const CartPage = () => {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
+      <h2 className="text-xl text-[#664D36] font-bold mb-4">Your Cart</h2>
 
       {cartItems.length === 0 ? (
-        <p>Your cart is empty.</p>
+        <div className="w-full">
+          {/* Heading */}
+          <h2 className="text-5xl font-semibold text-center mb-8 text-[#664D36]">
+            Your Cart is Empty
+          </h2>
+
+          {/* Background Image Section */}
+          <div
+            className="w-full h-[450px]  bg-no-repeat bg-center bg-contain rounded-xl shadow-md mb-8"
+            style={{
+              backgroundImage:
+                "url('https://img.freepik.com/premium-vector/modern-design-concept-empty-cart_637684-304.jpg')",
+            }}
+          ></div>
+
+          <div className="text-center">
+            <button
+              onClick={() => navigate("/marketplace")}
+              className="bg-[#B19258] text-black font-semibold px-6 py-3 rounded hover:bg-[#B19258]/80 transition"
+            >
+              Browse Products
+            </button>
+          </div>
+        </div>
       ) : (
         <>
           <ul className="space-y-4">

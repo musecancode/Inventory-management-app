@@ -7,6 +7,7 @@ import ConsumerDashboard from "./ConsumerDashboard";
 import Home from "./Home"; //
 import Header from "./Header";
 import CartPage from "./CartPage";
+import Footer from "./Footer";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/consumer" element={<ConsumerDashboard />} />
         <Route path="/cart" element={<CartPage />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 }

@@ -65,6 +65,7 @@ export default function Marketplace() {
         console.log("Cart item updated");
       } else {
         await setDoc(cartRef, {
+          productId: product.id, // ✅ Add this line
           title: product.title,
           price: product.price,
           vendorId: product.vendorId,
@@ -84,7 +85,6 @@ export default function Marketplace() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-center">Marketplace</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {products.map((product) => (
           <div
@@ -96,15 +96,17 @@ export default function Marketplace() {
               alt={product.title}
               className="h-40 object-cover w-full rounded"
             />
-            <h3 className="text-lg font-semibold mt-2">{product.title}</h3>
-            <p className="text-gray-600">Price: ₹{product.price}</p>
-            <p className="text-gray-500">Stock: {product.stock}</p>
+            <h3 className="text-lg font-semibold text-[#664D36] mt-2">
+              {product.title}
+            </h3>
+            <p className="text-[#664D36]">Price: ₹{product.price}</p>
+            <p className="text-[#664D36]">Stock: {product.stock}</p>
 
             {/* Removed Buy Now button */}
 
             <button
               onClick={() => handleAddToCart(product)}
-              className="mt-2 bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 w-full"
+              className="mt-2 bg-[#664D36] text-white px-4 py-1 rounded hover:bg-[#B19258] w-full"
             >
               Add to Cart
             </button>

@@ -19,8 +19,8 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white shadow-md p-4 flex justify-between items-center relative">
-      <Link to="/" className="text-xl font-bold text-purple-600">
+    <header className="fixed top-0 left-0 w-full z-50 bg-[#B19258]/80 shadow-md p-4 flex justify-between items-center">
+      <Link to="/" className="text-xl font-bold text-white">
         InventoryApp
       </Link>
 
@@ -28,14 +28,14 @@ export default function Header() {
         {/* Show cart only for consumer */}
         {user && role === "consumer" && (
           <Link to="/cart" className="relative">
-            <ShoppingCart className="w-6 h-6 text-purple-600" />
+            <ShoppingCart className="w-6 h-6 text-white" />
           </Link>
         )}
 
         {/* User Profile / Login */}
         {!user ? (
           <Link to="/login">
-            <UserPlus className="text-purple-600 w-6 h-6" />
+            <UserPlus className="text-white w-6 h-6" />
           </Link>
         ) : (
           <div className="relative">
@@ -43,7 +43,7 @@ export default function Header() {
               className="cursor-pointer"
               onClick={() => setShowDropdown((prev) => !prev)}
             >
-              <User className="text-purple-600 w-6 h-6" />
+              <User className="text-white w-6 h-6" />
             </div>
 
             {showDropdown && (
