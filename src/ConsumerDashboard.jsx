@@ -3,7 +3,6 @@ import Marketplace from "./MArketPlace";
 export default function ConsumerDashboard() {
   return (
     <div className="w-full bg-[#FFF3DD]/60">
-      {/* Hero Section: Includes header height in viewport */}
       <div className="w-full mt-14 h-[90vh] pt-[8px] px-2">
         <div className="relative w-full h-full rounded-xl overflow-hidden">
           {/* Background Image */}
@@ -14,7 +13,7 @@ export default function ConsumerDashboard() {
             style={{ objectPosition: "center" }}
           />
 
-          {/* Scalloped Welcome Block using clip-path */}
+          {/* Scalloped Welcome Block */}
           <div className="absolute bottom-10 right-10 z-10">
             <div
               className="bg-[#FFF3DD] px-12 py-10 shadow-xl border border-orange-300 text-center text-gray-800"
@@ -34,7 +33,7 @@ export default function ConsumerDashboard() {
             </div>
           </div>
 
-          {/* Checkered Bottom Left Grid – Edge aligned */}
+          {/* Checkered Bottom Left Grid  */}
           <div className="absolute bottom-0 left-0 z-10 flex flex-wrap w-[150px]">
             {Array.from({ length: 48 }).map((_, i) => (
               <div

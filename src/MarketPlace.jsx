@@ -102,8 +102,6 @@ export default function Marketplace() {
             <p className="text-[#664D36]">Price: ₹{product.price}</p>
             <p className="text-[#664D36]">Stock: {product.stock}</p>
 
-            {/* Removed Buy Now button */}
-
             <button
               onClick={() => handleAddToCart(product)}
               className="mt-2 bg-[#664D36] text-white px-4 py-1 rounded hover:bg-[#B19258] w-full"
